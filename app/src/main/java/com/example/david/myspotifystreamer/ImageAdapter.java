@@ -8,6 +8,8 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Created by David on 10/20/15.
  */
@@ -45,7 +47,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = new ImageView(mContext);
             //imageView.setLayoutParams(new GridView.LayoutParams(120,120));
             //imageView.setLayoutParams(mImageViewLayoutParams);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             //imageView.setPadding(8, 8, 8, 8);
         } else {
@@ -63,9 +65,6 @@ public class ImageAdapter extends BaseAdapter {
                 .noFade().resize(250,250)
                 .into(imageView);
         */
-        //Picasso.with(mContext).load("http://imgur.com/MEbfVbN").into(imageView);
-        //Picasso.with(mContext).load("http://imgur.com/uVCNc1C").into(imageView);
-
         return imageView;
     }
 
@@ -73,12 +72,16 @@ public class ImageAdapter extends BaseAdapter {
         urlArray = new String[0];
     }
 
-    public void addAll(String[] input) {
-        urlArray = new String[input.length];
-        for (int i = 0; i < input.length; i++) {
-            urlArray[i] = input[i];
+    public void addAll(ArrayList<MovieInfo> result) {
+        urlArray = new String[result.size()];
+        for (int i = 0; i < urlArray.length; i++) {
+            urlArray[i] = result.get(i).getPosterPath();
         }
         notifyDataSetChanged();
+    }
+
+    public void add(String src) {
+        return;
     }
 
 }

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -34,6 +35,8 @@ public class MainActivityFragment extends Fragment {
     private ImageAdapter imageAdapter;
 
     private GridView gridView;
+
+    private ArrayList<MovieInfo> movieInfos;
 
     public MainActivityFragment() {
     }
@@ -84,18 +87,20 @@ public class MainActivityFragment extends Fragment {
                 Toast.makeText(getActivity(), "" + position,
                         Toast.LENGTH_SHORT).show();
                 */
-                Intent intent = new Intent(getActivity(), DetailActivityFragment.class);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, (MovieInfo) movieInfos.get(position));
+                startActivity(intent);
             }
         });
 
         return rootView;
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<Void, Void, ArrayList<MovieInfo>> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-        private String[] getMovieDataFromJson(String JsonStr)
+        private ArrayList<MovieInfo> getMovieDataFromJson(String JsonStr)
                 throws JSONException {
 
             // These are names of the json object that need to be extracted
@@ -109,7 +114,7 @@ public class MainActivityFragment extends Fragment {
 
             JSONArray resultArray = movieJson.getJSONArray(OWM_RESULTS);
 
-            String[] resultStrs = new String[resultArray.length()];
+            ArrayList<MovieInfo> arrayList = new ArrayList<MovieInfo>();
             for (int i = 0; i < resultArray.length(); i++) {
 
                 // Get the JSON Object of each movie
@@ -118,17 +123,20 @@ public class MainActivityFragment extends Fragment {
                 //
                 String postalURL = eachMovie.getString(OWM_POSTER);
                 String actualURL = "http://image.tmdb.org/t/p/w185" + postalURL;
+                String title = eachMovie.getString(OWM_TITLE);
+                String overview = eachMovie.getString(OWM_OVERVIEW);
+                String vote = eachMovie.getString(OWM_VOTE);
                 Log.v(LOG_TAG, "Postal_url:" + actualURL);
-                resultStrs[i] = actualURL;
+                arrayList.add(i, new MovieInfo(actualURL,title,overview,vote));
             }
 
-            return resultStrs;
+            return arrayList;
          }
 
 
 
         @Override
-        protected String[] doInBackground(Void... params) {
+        protected ArrayList<MovieInfo> doInBackground(Void... params) {
 
             if (params == null) {
                 return null;
@@ -219,11 +227,13 @@ public class MainActivityFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] strings) {
-            if (strings != null) {
+        protected void onPostExecute(ArrayList<MovieInfo> result) {
+            if (result != null) {
+                movieInfos = result;
                 imageAdapter.clear();
-                imageAdapter.addAll(strings);
+                imageAdapter.addAll(result);
             }
         }
+
     }
 }
