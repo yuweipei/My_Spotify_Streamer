@@ -170,7 +170,7 @@ public class MainActivityFragment extends Fragment {
 
             //
             String searchArea = "movie";
-            String myID = "d3fa940065011fb83cc29169d05e8019";
+            String myID = "**********";
             try {
                 // Construct the URL for the
                 final String REQUEST_BASE_URL = "http://api.themoviedb.org/3/discover";
