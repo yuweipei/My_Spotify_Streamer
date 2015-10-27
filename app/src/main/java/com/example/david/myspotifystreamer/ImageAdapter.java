@@ -17,10 +17,11 @@ public class ImageAdapter extends BaseAdapter {
 
     private Context mContext;
 
-    private String[] urlArray = {
+    private String[] urlArray = {};
+            /*= {
             "http://image.tmdb.org/t/p/w185/vlTPQANjLYTebzFJM1G4KeON0cb.jpg",
-            "http://image.tmdb.org/t/p/w185/kqjL17yufvn9OVLyXYpvtyrFfak.jpg"
-    };
+            "http://image.tmdb.org/t/p/w185/kqjL17yufvn9OVLyXYpvtyrFfak.jpg"}
+            */
 
     public ImageAdapter(Context c) {
         mContext = c;
@@ -47,7 +48,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = new ImageView(mContext);
             //imageView.setLayoutParams(new GridView.LayoutParams(120,120));
             //imageView.setLayoutParams(mImageViewLayoutParams);
-            //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
             //imageView.setPadding(8, 8, 8, 8);
         } else {

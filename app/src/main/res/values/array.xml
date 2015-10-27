@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="pref_sort_list_titles">
+        <item>Most popular</item>
+        <item>Highest rate</item>
+        <item>Release date</item>
+    </string-array>
+
+    <string-array name="pref_sort_list_values" >
+        <item>@string/pref_popular</item>
+        <item>@string/pref_vote</item>
+        <item>@string/pref_release_date</item>
+    </string-array>
+</resources>

@@ -1,9 +1,11 @@
 package com.example.david.myspotifystreamer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +53,7 @@ public class MainActivityFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Use its own movieview to inflate the view
         // use xml view to create a menu option.
-        inflater.inflate(R.menu.movieview,menu);
+        inflater.inflate(R.menu.movieview, menu);
     }
 
     @Override
@@ -59,13 +61,26 @@ public class MainActivityFragment extends Fragment {
         // handle refresh here
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchMovieTask fetchMovieTask = new FetchMovieTask();
-            fetchMovieTask.execute();
+            // update movie information
+            updateMovieInfo();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovieInfo();
+    }
+
+    void updateMovieInfo() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortParamStr = preferences.getString(getString(R.string.pref_sort_order_key),
+                getString(R.string.pref_sort_order_default));
+        FetchMovieTask fetchMovieTask = new FetchMovieTask();
+        fetchMovieTask.execute(sortParamStr);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -96,7 +111,7 @@ public class MainActivityFragment extends Fragment {
         return rootView;
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, ArrayList<MovieInfo>> {
+    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<MovieInfo>> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -109,6 +124,8 @@ public class MainActivityFragment extends Fragment {
             final String OWM_TITLE = "original_title";
             final String OWM_OVERVIEW = "overview";
             final String OWM_VOTE = "vote_average";
+            final String OWM_RELEASE = "release_date";
+            final String OWM_ID = "id";
 
             JSONObject movieJson = new JSONObject(JsonStr);
 
@@ -126,19 +143,20 @@ public class MainActivityFragment extends Fragment {
                 String title = eachMovie.getString(OWM_TITLE);
                 String overview = eachMovie.getString(OWM_OVERVIEW);
                 String vote = eachMovie.getString(OWM_VOTE);
+                String releaseDate = eachMovie.getString(OWM_RELEASE);
+                String movieId = eachMovie.getString(OWM_ID);
+
                 Log.v(LOG_TAG, "Postal_url:" + actualURL);
-                arrayList.add(i, new MovieInfo(actualURL,title,overview,vote));
+                arrayList.add(i, new MovieInfo(actualURL,title,overview,vote,releaseDate,movieId));
             }
 
             return arrayList;
          }
 
-
-
         @Override
-        protected ArrayList<MovieInfo> doInBackground(Void... params) {
+        protected ArrayList<MovieInfo> doInBackground(String... sortParam) {
 
-            if (params == null) {
+            if (sortParam == null) {
                 return null;
             }
 
@@ -152,11 +170,6 @@ public class MainActivityFragment extends Fragment {
 
             //
             String searchArea = "movie";
-            String[] sortParamList = {
-                    "popularity.desc",
-                    "vote_average.desc",
-                    "vote_count.desc"
-            };
             String myID = "d3fa940065011fb83cc29169d05e8019";
             try {
                 // Construct the URL for the
@@ -167,7 +180,7 @@ public class MainActivityFragment extends Fragment {
 
                 Uri builtUri = Uri.parse(REQUEST_BASE_URL).buildUpon()
                         .appendPath(searchArea)
-                        .appendQueryParameter(SORT_PARAM, sortParamList[0])
+                        .appendQueryParameter(SORT_PARAM, sortParam[0])
                         .appendQueryParameter(APP_KEY, myID)
                         .build();
 

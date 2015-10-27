@@ -11,12 +11,16 @@ public class MovieInfo implements Parcelable {
     private String titleName;
     private String overview;
     private String voteAverage;
+    private String releaseDate;
+    private String movieId;
 
     public MovieInfo(String... params) {
         this.posterPath = params[0];
         this.titleName = params[1];
         this.overview = params[2];
         this.voteAverage = params[3];
+        this.releaseDate = params[4];
+        this.movieId = params[5];
     }
 
     public MovieInfo(Parcel parcel) {
@@ -24,11 +28,14 @@ public class MovieInfo implements Parcelable {
         titleName = parcel.readString();
         overview = parcel.readString();
         voteAverage = parcel.readString();
+        releaseDate = parcel.readString();
+        movieId = parcel.readString();
     }
 
     @Override
     public String toString() {
-        return posterPath + "\n" + titleName + "\n" + overview + "\n" + voteAverage;
+        return movieId + posterPath + "\n" + titleName + "\n" + overview + "\n" + voteAverage +
+                "\n" + releaseDate ;
     }
 
     @Override
@@ -42,6 +49,8 @@ public class MovieInfo implements Parcelable {
         parcel.writeString(titleName);
         parcel.writeString(overview);
         parcel.writeString(voteAverage);
+        parcel.writeString(releaseDate);
+        parcel.writeString(movieId);
     }
 
     public String getPosterPath() {return posterPath;}
@@ -51,6 +60,10 @@ public class MovieInfo implements Parcelable {
     public String getOverview() {return overview;}
 
     public String getVoteAverage() {return voteAverage;}
+
+    public String getReleaseDate() {return releaseDate;}
+
+    public String getMovieId() {return movieId;}
 
     public static final Creator<MovieInfo> CREATOR = new Creator<MovieInfo>(){
         @Override
